@@ -1,6 +1,6 @@
 name: Automatic Releases workflow sample
 on:  
-  - workflow-dispatch
+  workflow-dispatch:
   # - push
   
 jobs:
