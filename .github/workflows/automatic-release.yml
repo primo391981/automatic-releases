@@ -24,7 +24,7 @@ jobs:
       
       - name: Create Release
         env:
-          GITHUB_TOKEN: ${{ steps.changelog.outputs.tag }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BODY: ${{ steps.changelog.outputs.clean_changelog }}
           RELEASE_NAME: ${{ steps.changelog.outputs.tag }} 
 
