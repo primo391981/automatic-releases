@@ -1,7 +1,9 @@
 name: Automatic Releases workflow sample
 on:  
-  workflow_dispatch:
+  # workflow_dispatch:
   push:
+    branches:
+      - main
   
 jobs:
   create-release:
@@ -29,6 +31,7 @@ jobs:
           tag_name: ${{ steps.changelog.outputs.tag }} 
           release_name: ${{ steps.changelog.outputs.tag }} 
           body: ${{ steps.changelog.outputs.clean_changelog }}
+        working-directory: ./src
         
  
      
