@@ -46,6 +46,8 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.changelog.outputs.tag }}
     steps:  
       - name: Checkout
         uses: actions/checkout@v3
@@ -92,7 +94,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ needs.create-release.outputs.tag }}
         
         
  
