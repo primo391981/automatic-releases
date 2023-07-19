@@ -68,8 +68,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/primo391981/publish-packages/example
-          tags: type=sha
+          images: ghcr.io/primo391981/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}
+          tags: type=semver,pattern={{version}},value=${{ steps.changelog.outputs.tag }}
       - name: Login to GHCR
         uses: docker/login-action@v2
         with:
@@ -81,7 +81,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: tags: ${{ steps.meta.outputs.tags }}
         
         
  
