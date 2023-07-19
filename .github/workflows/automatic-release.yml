@@ -1,7 +1,7 @@
 name: Automatic Releases workflow sample
 on:  
   # workflow_dispatch:
-  push:
+  pull_request:
     branches:
       - main
   
@@ -17,13 +17,13 @@ jobs:
           dotnet-version: '6.0.x'
       - name: Install dependencies
         run: dotnet restore
-        working-dir: src
+        working-directory: src
       - name: Build
         run: dotnet build
-        working-dir: src
+        working-directory: src
       - name: Test with the dotnet CLI
         run: dotnet test
-        working-dir: src
+        working-directory: src
 
   create-release:
     name: "Create release"
