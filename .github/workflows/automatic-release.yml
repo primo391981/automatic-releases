@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   
 jobs:
   test:
@@ -17,15 +20,16 @@ jobs:
           dotnet-version: '6.0.x'
       - name: Install dependencies
         run: dotnet restore
-        working-dir: src
+        working-directory: src
       - name: Build
         run: dotnet build
-        working-dir: src
+        working-directory: src
       - name: Test with the dotnet CLI
         run: dotnet test
-        working-dir: src
+        working-directory: src
 
   create-release:
+    if: ${{ github.event_name == 'push' }}
     name: "Create release"
     needs: test
     permissions:
@@ -51,6 +55,7 @@ jobs:
           body: ${{ steps.changelog.outputs.clean_changelog }}
       
   publish-package:
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     needs: test
     permissions:
