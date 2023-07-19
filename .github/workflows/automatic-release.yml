@@ -81,7 +81,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/primo391981/images/${{ vars.APPLICATION_NAME }}
+          images: ghcr.io/primo391981/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}
           tags: type=semver,pattern={{version}},value=${{ needs.create-release.outputs.tag }}
           # tags: type=sha
       - name: Login to GHCR
