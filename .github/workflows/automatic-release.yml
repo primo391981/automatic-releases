@@ -1,9 +1,9 @@
 name: Automatic Releases workflow sample
 on:  
   # workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -27,6 +27,17 @@ jobs:
       - name: Test with the dotnet CLI
         run: dotnet test
         working-directory: src
+  
+  print-status:
+    name: logs
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print values
+        run: |
+          echo ${{ github.ref }}
+          echo ${{ github.event_name }}
+          echo ${{ github.pull_request.merged }}
 
   create-release:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.event.pull_request.merged == true
