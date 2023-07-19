@@ -1,11 +1,27 @@
-# Use an official Python runtime as the base image
-FROM python:3.9-slim
+# Use the official .NET Core SDK as the base image
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
 
-# Set the working directory in the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Create a simple Python script for the "Hello, World!" application
-RUN echo "print('Hello, World!')" > app.py
+# Copy the .NET project files and restore dependencies
+COPY ./src/*.csproj ./
+RUN dotnet restore
 
-# Define the command to run the application
-CMD ["python", "app.py"]
+# Copy the rest of the application source code
+COPY . ./src/
+
+# Build the .NET application
+RUN dotnet publish -c Release -o out
+
+# Use a smaller runtime image for the final image
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the published output from the build environment
+COPY --from=build-env /app/out .
+
+# Define the command to run your .NET application
+CMD ["dotnet", "SimpleDotNetApp.dll"]
