@@ -1,6 +1,9 @@
 name: Automatic Releases workflow sample
 on:  
   # workflow_dispatch:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -26,6 +29,7 @@ jobs:
         working-directory: src
 
   create-release:
+    if: ${{ github.event_name == 'push' }}
     name: "Create release"
     needs: test
     permissions:
@@ -51,6 +55,7 @@ jobs:
           body: ${{ steps.changelog.outputs.clean_changelog }}
       
   publish-package:
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     needs: test
     permissions:
