@@ -83,9 +83,9 @@ jobs:
         with:
           images: ghcr.io/primo391981/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}
           tags: |
+            type=semver,pattern={{version}},value=${{ needs.create-release.outputs.tag }}
             type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern={{version}},value=${{ needs.create-release.outputs.tag }}
             type=semver,pattern={{major}}.{{minor}}
           # tags: type=sha
       - name: Login to GHCR
