@@ -67,7 +67,7 @@ jobs:
           release_name: ${{ steps.changelog.outputs.tag }} 
           body: ${{ steps.changelog.outputs.clean_changelog }}
       
-  publish-package:
+  publish-package-ghcr:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     needs: create-release
@@ -101,6 +101,34 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+        
+    build-and-deploy-acr:
+    runs-on: ubuntu-latest
+    needs: create-release
+    steps:
+    # checkout the repo
+    - name: 'Checkout Github Action'
+      uses: actions/checkout@v3
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - uses: azure/docker-login@v1
+      with:
+        login-server: ${{ vars.ACR_SERVER }}
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - run: |
+        docker build . -t ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:{{ needs.create-release.outputs.tag }}
+        docker push ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:{{ needs.create-release.outputs.tag }} 
+
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'poc-auto-package'
+        images: '${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:{{ needs.create-release.outputs.tag }}'
         
         
  
