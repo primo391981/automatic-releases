@@ -47,7 +47,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.changelog.outputs.tag }}
+      tag: ${{ steps.changelog.outputs.version }}
     steps:  
       - name: Checkout
         uses: actions/checkout@v3
