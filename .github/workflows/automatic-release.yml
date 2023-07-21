@@ -158,7 +158,7 @@ jobs:
 
     - uses: azure/docker-login@v1
       with:
-        login-server: ${{ vars.ACR_SERVER }}
+        login-server: ${{ vars.ACR_NAME }}
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
@@ -167,7 +167,7 @@ jobs:
       #   SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
       run: |
         container_name=${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
-        az deployment group create --resource-group RG-JMF-POC --template-file appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_SERVER }} containerImage=$container_name
+        az deployment group create --resource-group RG-JMF-POC --template-file appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_NAME }} containerImage=$container_name
       working-directory: infrastructure
         
  
