@@ -166,10 +166,9 @@ jobs:
       # env:
       #   SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
       run: |
-        container_name="pocimages65464.azurecr.io/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}"
-        az deployment group what-if --resource-group RG-JMF-POC --template-file appservice.bicep --parameters appName=poc-auto-package acrName=pocimages65464 acrResourceGroup=RG-JMF-POC containerImage=devsecops/hello-world-app:v3.23.13
+        container_name=${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
+        az deployment group what-if --resource-group RG-JMF-POC --template-file appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_SERVER }} containerImage=$container_name
       working-directory: infrastructure
-
         
  
      
