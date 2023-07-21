@@ -1,7 +1,7 @@
 param appName string
 param acrName string
 // param acrResourceGroup string
-param sku string = 'Basic'
+param sku string = 'F1'
 param containerImage string
 param location string = resourceGroup().location
 
