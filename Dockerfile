@@ -23,5 +23,8 @@ WORKDIR /app
 # Copy the published output from the build environment
 COPY --from=build-env /app/out .
 
+# Expose port 80 to access the application
+EXPOSE 80
+
 # Define the command to run your .NET application
 CMD ["dotnet", "SimpleDotNetApp.dll"]
