@@ -145,7 +145,7 @@ jobs:
   deploy-to-infra:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
-    needs: publish-package-acr
+    needs: [publish-package-acr,create-release]
     steps:
     # checkout the repo
     - name: 'Checkout Github Action'
