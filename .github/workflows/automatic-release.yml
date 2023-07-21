@@ -132,7 +132,7 @@ jobs:
     - name: 'Set output'
       id: set-container-name
       env:
-          SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
+        SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
       run: |
         container=$(gpg --symmetric --batch --passphrase "$SECRET" --output - <(echo "${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}") | base64 -w0)
         echo "container_name=$container" >> "$GITHUB_OUTPUT"
@@ -162,8 +162,12 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    - run: |
-        az deployment --what-if group create --resource-group RG-JMF-POC --template-file ./infrastructure/appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_SERVER }} acrResourceGroup=RG-JMF-POC containerImage=${{ needs.publish-package-acr.outputs.container_name }}'
+    - name: 'Deploy to Azure'
+      env:
+        SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
+      run: |
+        container_name=deployment_key=$(gpg --decrypt --quiet --batch --passphrase "$SECRET" --output - <(echo "${{ needs.publish-package-acr.outputs.container_name }}" | base64 --decode))
+        az deployment --what-if group create --resource-group RG-JMF-POC --template-file ./infrastructure/appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_SERVER }} acrResourceGroup=RG-JMF-POC containerImage=$container_name'
 
         
  
