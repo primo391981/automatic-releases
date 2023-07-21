@@ -1,9 +1,13 @@
 param appName string
 param acrName string
-param acrResourceGroup string
+// param acrResourceGroup string
 param sku string = 'Basic'
 param containerImage string
 param location string = resourceGroup().location
+
+resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing { 
+  name: acrName
+}
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-02-01' = {
   name: appName
@@ -27,15 +31,15 @@ resource appService 'Microsoft.Web/sites@2021-02-01' = {
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: reference(acrName).loginServerUrl
+          value: acr.properties.loginServer
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: reference(acrName).adminUsername
+          value: acr.listCredentials().username // reference(acrName).adminUsername
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: listKeys(acrResourceGroup, acrName).keys[0].value
+          value: acr.listCredentials().passwords[0].value //listKeys(acrResourceGroup, acrName).keys[0].value
         }
         {
           name: 'WEBSITES_PORT'
