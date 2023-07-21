@@ -9,7 +9,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existin
   name: acrName
 }
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2021-02-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: appName
   location: location
   sku: {
@@ -18,7 +18,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-02-01' = {
   }
 }
 
-resource appService 'Microsoft.Web/sites@2021-02-01' = {
+resource appService 'Microsoft.Web/sites@2022-09-01' = {
   name: appName
   location: location
   properties: {
