@@ -167,7 +167,7 @@ jobs:
       #   SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
       run: |
         container_name=${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
-        az deployment --what-if --resource-group "RG-JMF-POC" --template-file "infrastructure/appservice.bicep" --parameters appName="poc-auto-package" acrName="${{ vars.ACR_SERVER }}"" acrResourceGroup="RG-JMF-POC" containerImage="$container_name"
+        az deployment --what-if --resource-group "RG-JMF-POC" --template-file "infrastructure/appservice.bicep" --parameters appName="poc-auto-package" acrName="${{ vars.ACR_SERVER }}" acrResourceGroup="RG-JMF-POC" containerImage="$container_name"
 
         
  
