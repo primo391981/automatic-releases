@@ -166,9 +166,8 @@ jobs:
       # env:
       #   SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
       run: |
-        # container_name=deployment_key=$(gpg --decrypt --quiet --batch --passphrase "$SECRET" --output - <(echo "${{ needs.publish-package-acr.outputs.container_name }}" | base64 --decode))
         container_name=${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
-        az deployment --what-if group create --resource-group RG-JMF-POC --template-file ./infrastructure/appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_SERVER }} acrResourceGroup=RG-JMF-POC containerImage=$container_name'
+        az deployment --what-if group create --resource-group RG-JMF-POC --template-file ./infrastructure/appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_SERVER }} acrResourceGroup=RG-JMF-POC containerImage=$container_name
 
         
  
