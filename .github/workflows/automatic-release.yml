@@ -123,6 +123,7 @@ jobs:
         password: ${{ secrets.ACR_PASSWORD }}
 
     - run: |
+        echo {{ needs.create-release.outputs.tag }}
         docker build . -t ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:{{ needs.create-release.outputs.tag }}
         docker push ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:{{ needs.create-release.outputs.tag }} 
 
