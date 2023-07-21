@@ -5,7 +5,7 @@ param sku string = 'Basic'
 param containerImage string
 param location string = resourceGroup().location
 
-resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing { 
+resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = { 
   name: acrName
 }
 
