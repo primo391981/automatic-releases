@@ -106,7 +106,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
-      container_name: ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
+      container_name: ${{ steps.set-container-name.outputs.container_name }}
     needs: create-release
     steps:
     # checkout the repo
