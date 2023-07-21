@@ -1,21 +1,22 @@
 param appName string
 param acrName string
 param acrResourceGroup string
-param sku string = 'Free'
+param sku string = 'Basic'
 param containerImage string
+param location string = resourceGroup().location
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2021-02-01' = {
   name: appName
-  location: resourceGroup().location
+  location: location
   sku: {
     name: sku
     capacity: 1
   }
 }
 
-resource appService 'Microsoft.Web/sites@2022-09-01' = {
+resource appService 'Microsoft.Web/sites@2021-02-01' = {
   name: appName
-  location: resourceGroup().location
+  location: location
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
@@ -23,23 +24,23 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
-        },
+        }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: reference(acrName, '2021-07-01').loginServerUrl
-        },
+          value: reference(acrName).loginServerUrl
+        }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: reference(acrName, '2021-07-01').adminUsername
-        },
+          value: reference(acrName).adminUsername
+        }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: listKeys(acrResourceGroup, acrName, '2021-07-01').keys[0].value
-        },
+          value: listKeys(acrResourceGroup, acrName).keys[0].value
+        }
         {
           name: 'WEBSITES_PORT'
           value: '80'
-        },
+        }
         {
           name: 'DOCKER_CUSTOM_IMAGE_NAME'
           value: containerImage
@@ -47,9 +48,6 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
       ]
     }
   }
-  dependsOn: [
-    appServicePlan
-  ]
 }
 
 output endpoint string = appService.properties.defaultHostName
