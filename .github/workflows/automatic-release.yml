@@ -105,8 +105,8 @@ jobs:
   publish-package-acr:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
-    outputs:
-      container_name: ${{ steps.set-container-name.outputs.container_name }}
+    # outputs:
+    #   container_name: ${{ steps.set-container-name.outputs.container_name }}
     needs: create-release
     steps:
     # checkout the repo
@@ -129,13 +129,13 @@ jobs:
         echo ${{ needs.create-release.outputs.tag }}
         docker build . -t ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
         docker push ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }} 
-    - name: 'Set output'
-      id: set-container-name
-      env:
-        SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
-      run: |
-        container=$(gpg --symmetric --batch --passphrase "$SECRET" --output - <(echo "${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}") | base64 -w0)
-        echo "container_name=$container" >> "$GITHUB_OUTPUT"
+    # - name: 'Set output'
+    #   id: set-container-name
+    #   env:
+    #     SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
+    #   run: |
+    #     container=$(gpg --symmetric --batch --passphrase "$SECRET" --output - <(echo "${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}") | base64 -w0)
+    #     echo "container_name=$container" >> "$GITHUB_OUTPUT"
 
     # - uses: azure/webapps-deploy@v2
     #   with:
@@ -163,10 +163,11 @@ jobs:
         password: ${{ secrets.ACR_PASSWORD }}
 
     - name: 'Deploy to Azure'
-      env:
-        SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
+      # env:
+      #   SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
       run: |
-        container_name=deployment_key=$(gpg --decrypt --quiet --batch --passphrase "$SECRET" --output - <(echo "${{ needs.publish-package-acr.outputs.container_name }}" | base64 --decode))
+        # container_name=deployment_key=$(gpg --decrypt --quiet --batch --passphrase "$SECRET" --output - <(echo "${{ needs.publish-package-acr.outputs.container_name }}" | base64 --decode))
+        container_name=${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
         az deployment --what-if group create --resource-group RG-JMF-POC --template-file ./infrastructure/appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_SERVER }} acrResourceGroup=RG-JMF-POC containerImage=$container_name'
 
         
