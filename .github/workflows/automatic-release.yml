@@ -156,12 +156,7 @@ jobs:
         password: ${{ secrets.ACR_PASSWORD }}
 
     - run: |
-        az deployment --what-if group create --resource-group RG-JMF-POC \
-          --template-file ./infrastructure/appservice.bicep \
-          --parameters appName=poc-auto-package \
-          acrName=${{ vars.ACR_SERVER }} \
-          acrResourceGroup=RG-JMF-POC \
-          containerImage=${{ needs.publish-package-acr.outputs.container_name }}'
+        az deployment --what-if group create --resource-group RG-JMF-POC --template-file ./infrastructure/appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_SERVER }} acrResourceGroup=RG-JMF-POC containerImage=${{ needs.publish-package-acr.outputs.container_name }}'
 
         
  
