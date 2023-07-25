@@ -4,7 +4,7 @@ param acrName string
 param sku string = 'F1'
 param containerImage string
 param location string = resourceGroup().location
-var container = concat('DOCKER|',containerImage)
+var container = 'DOCKER|${containerImage}'
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = { 
   name: acrName
