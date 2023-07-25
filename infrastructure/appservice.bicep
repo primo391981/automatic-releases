@@ -13,6 +13,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existin
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: appName
   location: location
+  kind: 'linux'
   sku: {
     name: sku
     capacity: 1
