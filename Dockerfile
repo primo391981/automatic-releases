@@ -9,7 +9,7 @@ COPY ./src/*.csproj ./
 RUN dotnet restore
 
 # Copy the rest of the application source code
-COPY . ./src/
+COPY . .
 
 # Build the .NET application
 RUN dotnet publish -c Release -o out
@@ -27,4 +27,4 @@ COPY --from=build-env /app/out .
 EXPOSE 80
 
 # Define the command to run your .NET application
-CMD ["dotnet", "SimpleDotNetApp.dll"]
+CMD ["dotnet", "SimpleWebApp.dll"]
