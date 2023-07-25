@@ -1,12 +1,6 @@
-using System;
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
 
-namespace SimpleDotNetApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
-    }
-}
+app.MapGet("/", () => "Hello World!");
+
+app.Run();
