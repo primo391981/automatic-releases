@@ -32,7 +32,7 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
     httpsOnly: true
     siteConfig: {
       numberOfWorkers: 1
-      linuxFxVersion: 'DOCKER|nginx'
+      linuxFxVersion: container
       appSettings: [
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
