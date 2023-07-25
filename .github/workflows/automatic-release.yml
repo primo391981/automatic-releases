@@ -167,7 +167,7 @@ jobs:
       #   SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
       run: |
         container_name=${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
-        az deployment group create --resource-group RG-JMF-POC --template-file appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_NAME }} containerImage=$container_name
+        az deployment group create --resource-group RG-JMF-POC --template-file appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_NAME }} containerImage=DOCKER|$container_name
       working-directory: infrastructure
         
  

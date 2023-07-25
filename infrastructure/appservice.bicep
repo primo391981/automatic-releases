@@ -4,6 +4,7 @@ param acrName string
 param sku string = 'F1'
 param containerImage string
 param location string = resourceGroup().location
+var container = concat('DOCKER|',containerImage)
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = { 
   name: acrName
@@ -21,9 +22,13 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
 resource appService 'Microsoft.Web/sites@2022-09-01' = {
   name: appName
   location: location
+  kind: 'app,linux,container'
   properties: {
     serverFarmId: appServicePlan.id
+    httpsOnly: true
     siteConfig: {
+      numberOfWorkers: 1
+      linuxFxVersion: container
       appSettings: [
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
@@ -41,17 +46,10 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
           value: acr.listCredentials().passwords[0].value //listKeys(acrResourceGroup, acrName).keys[0].value
         }
-        {
-          name: 'WEBSITES_PORT'
-          value: '80'
-        }
-        {
-          name: 'DOCKER_CUSTOM_IMAGE_NAME'
-          value: containerImage
-        }
       ]
     }
   }
 }
+
 
 output endpoint string = appService.properties.defaultHostName
