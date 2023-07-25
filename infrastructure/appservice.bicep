@@ -32,7 +32,7 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
     httpsOnly: true
     siteConfig: {
       numberOfWorkers: 1
-      // linuxFxVersion: 'DOCKER|pocimages65464.azurecr.io/devsecops/hello-world-app:v5.0.1'
+      linuxFxVersion: 'DOCKER|nginx'
       appSettings: [
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
