@@ -40,7 +40,7 @@ jobs:
   #         echo ${{ github.event.pull_request.merged }}
 
   create-release:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     name: "Create release"
     needs: test
     permissions:
@@ -57,6 +57,7 @@ jobs:
         with: 
           github-token: ${{ secrets.github_token }}
           output-file: "false" 
+          git-branch: ${{ github.event.pull_request.head.ref }}
       - name: Create Release
         uses: actions/create-release@v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }} 
