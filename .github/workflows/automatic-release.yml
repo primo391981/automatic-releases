@@ -2,11 +2,11 @@ name: Automatic Releases workflow sample
 on:  
   # workflow_dispatch:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    # branches:
+    #   - main
+  # pull_request:
+  #   branches:
+  #     - main
   
 jobs:
   test:
@@ -61,7 +61,7 @@ jobs:
           output-file: "false" 
       - name: Create Release
         uses: actions/create-release@v1
-        if: ${{ steps.changelog.outputs.skipped == 'false' }} 
+        if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with: 
