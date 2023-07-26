@@ -50,9 +50,9 @@ jobs:
         run: |
           if [ ${{ github.ref }} = 'main' ]
           then
-            echo "value=false" >> "$GITHUB_OUTPUT"
+            echo 'value=false' >> "$GITHUB_OUTPUT"
           else
-            echo "value=true" >> "$GITHUB_OUTPUT"
+            echo 'value=true' >> "$GITHUB_OUTPUT"
           fi
 
 
@@ -76,7 +76,7 @@ jobs:
         with: 
           github-token: ${{ secrets.github_token }}
           output-file: "false" 
-          skip-tag: "${{ needs.check-ref.outputs.value }}"
+          skip-tag: "${{ needs.check-ref.outputs.create-tag }}"
       - name: Create Release
         uses: actions/create-release@v1
         if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
