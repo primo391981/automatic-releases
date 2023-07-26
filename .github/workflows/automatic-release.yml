@@ -38,11 +38,28 @@ jobs:
   #         echo ${{ github.ref }}
   #         echo ${{ github.event_name }}
   #         echo ${{ github.event.pull_request.merged }}
+  check-ref:
+    name: "Check branch"
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      create-tag: ${{ steps.check.outputs.value }}
+    steps:
+      - name: "Check branch name"
+        id: check
+        run: |
+          if [ ${{ github.ref }} = 'main' ]
+          then
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          fi
+
 
   create-release:
     # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     name: "Create release"
-    needs: test
+    needs: check-ref
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -59,6 +76,7 @@ jobs:
         with: 
           github-token: ${{ secrets.github_token }}
           output-file: "false" 
+          skip-tag: "${{ needs.check-ref.outputs.value }}"
       - name: Create Release
         uses: actions/create-release@v1
         if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
