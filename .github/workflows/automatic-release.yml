@@ -48,12 +48,12 @@ jobs:
     needs: test
     # outputs:
     #   tag: ${{ steps.changelog.outputs.tag }}
-    steps:  
-      - name: Checkout version repo
-        uses: actions/checkout@v3
-        with:
-          repository: primo391981/packages
-          path: packages
+    # steps:  
+    #   - name: Checkout version repo
+    #     uses: actions/checkout@v3
+    #     with:
+    #       repository: primo391981/packages
+    #       path: packages
       - name: Checkout
         uses: actions/checkout@v3
         # with:
@@ -75,8 +75,8 @@ jobs:
           github-token: ${{ secrets.github_token }}
           output-file: 'false' 
           skip-commit: 'true'
-          version-file: '../packages/package.json'
-          skip-tag: 'true'
+          # version-file: '../packages/package.json'
+          skip-tag: 'false'
       # - name: Create Release
       #   uses: actions/create-release@v1
       #   if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
@@ -86,20 +86,20 @@ jobs:
       #     tag_name: ${{ steps.changelog.outputs.tag }} 
       #     release_name: ${{ steps.changelog.outputs.tag }} 
       #     body: ${{ steps.changelog.outputs.clean_changelog }}
-      - run: |
-          pwd
-          ls -la
-          cd ..
-          pwd
-          ls -la
-          cd ..
-          pwd
-          ls -la
-      - name: Checkout version repo
-        uses: actions/checkout@v3
-        with:
-          repository: primo391981/packages
-      - run: cat package.json
+      # - run: |
+      #     pwd
+      #     ls -la
+      #     cd ..
+      #     pwd
+      #     ls -la
+      #     cd ..
+      #     pwd
+      #     ls -la
+      # - name: Checkout version repo
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: primo391981/packages
+      # - run: cat package.json
 
       
   # publish-package-ghcr:
