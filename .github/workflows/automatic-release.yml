@@ -75,16 +75,17 @@ jobs:
           output-file: 'false' 
           skip-commit: 'true'
           version-file: '../packages/package.json'
-      - name: Create Release
-        uses: actions/create-release@v1
-        if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
-        env: 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with: 
-          tag_name: ${{ steps.changelog.outputs.tag }} 
-          release_name: ${{ steps.changelog.outputs.tag }} 
-          body: ${{ steps.changelog.outputs.clean_changelog }}
+      # - name: Create Release
+      #   uses: actions/create-release@v1
+      #   if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
+      #   env: 
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with: 
+      #     tag_name: ${{ steps.changelog.outputs.tag }} 
+      #     release_name: ${{ steps.changelog.outputs.tag }} 
+      #     body: ${{ steps.changelog.outputs.clean_changelog }}
       - run: |
+          cd ..
           ls -la
           # cat ../packages/package.json
       
