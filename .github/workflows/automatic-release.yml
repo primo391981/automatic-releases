@@ -86,12 +86,12 @@ jobs:
       #     tag_name: ${{ steps.changelog.outputs.tag }} 
       #     release_name: ${{ steps.changelog.outputs.tag }} 
       #     body: ${{ steps.changelog.outputs.clean_changelog }}
-      - run: |
-          cd /home/runner/work/automatic-releases/automatic-releases/packages
-          ls -la
-          cd ..
-          ls -la
-          # cat packages/package.json
+      - name: Checkout version repo
+        uses: actions/checkout@v3
+        with:
+          repository: primo391981/packages
+      - run: ls
+
       
   # publish-package-ghcr:
   #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
