@@ -2,11 +2,11 @@ name: Automatic Releases workflow sample
 on:  
   # workflow_dispatch:
   push:
-    # branches:
-    #   - main
-  # pull_request:
-  #   branches:
-  #     - main
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   
 jobs:
   test:
@@ -37,55 +37,48 @@ jobs:
   #       run: |
   #         echo ${{ github.ref }}
   #         echo ${{ github.event_name }}
-  #         echo ${{ github.event.pull_request.merged }}
-  check-ref:
-    name: "Check branch"
-    needs: test
-    runs-on: ubuntu-latest
-    outputs:
-      create-tag: ${{ steps.check.outputs.value }}
-    steps:
-      - name: "Check branch name"
-        id: check
-        run: |
-          if [ ${{ github.ref }} = 'main' ]
-          then
-            echo 'value=false' >> "$GITHUB_OUTPUT"
-          else
-            echo 'value=true' >> "$GITHUB_OUTPUT"
-          fi
-
+  #         echo ${{ github.event.pull_request.merged 
 
   create-release:
-    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     name: "Create release"
-    needs: check-ref
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    outputs:
-      tag: ${{ steps.changelog.outputs.tag }}
+    # outputs:
+    #   tag: ${{ steps.changelog.outputs.tag }}
     steps:  
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-      - name: Conventional Changelog Action
-        id: changelog 
-        uses: TriPSs/conventional-changelog-action@v3 
-        with: 
-          github-token: ${{ secrets.github_token }}
-          output-file: "false" 
-          skip-tag: "${{ needs.check-ref.outputs.create-tag }}"
-      - name: Create Release
-        uses: actions/create-release@v1
-        if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
-        env: 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with: 
-          tag_name: ${{ steps.changelog.outputs.tag }} 
-          release_name: ${{ steps.changelog.outputs.tag }} 
-          body: ${{ steps.changelog.outputs.clean_changelog }}
+          path: main
+      - name: Checkout version repo
+        uses: actions/checkout@v3
+        with:
+          repository: primo391981/packages
+          path: packages
+      - run: ls -la
+      # - name: "Checkout app repo"
+      #   uses: actions/checkout@v3
+      #   with:
+      #     ref: ${{ github.event.pull_request.head.ref }}
+      # - name: Conventional Changelog Action
+      #   id: changelog 
+      #   uses: TriPSs/conventional-changelog-action@v3 
+      #   with: 
+      #     github-token: ${{ secrets.github_token }}
+      #     output-file: "false" 
+      #     skip-tag: "${{ needs.check-ref.outputs.create-tag }}"
+      #     version-file:
+      # - name: Create Release
+      #   uses: actions/create-release@v1
+      #   if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
+      #   env: 
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with: 
+      #     tag_name: ${{ steps.changelog.outputs.tag }} 
+      #     release_name: ${{ steps.changelog.outputs.tag }} 
+      #     body: ${{ steps.changelog.outputs.clean_changelog }}
       
   # publish-package-ghcr:
   #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
