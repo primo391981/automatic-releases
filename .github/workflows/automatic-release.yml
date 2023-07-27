@@ -56,8 +56,8 @@ jobs:
           path: packages
       - name: Checkout
         uses: actions/checkout@v3
-        # with:
-        #   path: main
+        with:
+          path: main
       # - name: Checkout version repo
       #   uses: actions/checkout@v3
       #   with:
@@ -75,6 +75,7 @@ jobs:
           output-file: 'false' 
           skip-commit: 'true'
           version-file: '../packages/package.json'
+          skip-tag: 'true'
       # - name: Create Release
       #   uses: actions/create-release@v1
       #   if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
@@ -85,7 +86,10 @@ jobs:
       #     release_name: ${{ steps.changelog.outputs.tag }} 
       #     body: ${{ steps.changelog.outputs.clean_changelog }}
       - run: |
-          cat packages/package.json
+          ls -la
+          cd ..
+          ls -la
+          # cat packages/package.json
       
   # publish-package-ghcr:
   #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
