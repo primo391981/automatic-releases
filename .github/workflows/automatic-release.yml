@@ -86,6 +86,15 @@ jobs:
       #     tag_name: ${{ steps.changelog.outputs.tag }} 
       #     release_name: ${{ steps.changelog.outputs.tag }} 
       #     body: ${{ steps.changelog.outputs.clean_changelog }}
+      - run: |
+          pwd
+          ls -la
+          cd ..
+          pwd
+          ls -la
+          cd ..
+          pwd
+          ls -la
       - name: Checkout version repo
         uses: actions/checkout@v3
         with:
