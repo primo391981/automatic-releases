@@ -84,7 +84,9 @@ jobs:
           tag_name: ${{ steps.changelog.outputs.tag }} 
           release_name: ${{ steps.changelog.outputs.tag }} 
           body: ${{ steps.changelog.outputs.clean_changelog }}
-      - run: cat ../packages/package.json
+      - run: |
+          ls -la
+          # cat ../packages/package.json
       
   # publish-package-ghcr:
   #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
