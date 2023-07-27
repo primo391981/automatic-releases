@@ -48,7 +48,7 @@ jobs:
     needs: test
     # outputs:
     #   tag: ${{ steps.changelog.outputs.tag }}
-    # steps:  
+    steps:  
     #   - name: Checkout version repo
     #     uses: actions/checkout@v3
     #     with:
