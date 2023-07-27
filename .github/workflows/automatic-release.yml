@@ -69,7 +69,6 @@ jobs:
         with: 
           github-token: ${{ secrets.github_token }}
           output-file: "false" 
-          skip-tag: "${{ needs.check-ref.outputs.create-tag }}"
           version-file: ../packages/package.json
       - name: Create Release
         uses: actions/create-release@v1
