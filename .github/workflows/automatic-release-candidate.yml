@@ -81,6 +81,8 @@ jobs:
           # version-file: '../packages/package.json'
           skip-tag: 'false'
           git-branch: '${{ github.event.pull_request.head.ref }}'
+          pre-release: 'true'
+          git-push: 'false'
       # - name: Create Release
       #   uses: actions/create-release@v1
       #   if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
