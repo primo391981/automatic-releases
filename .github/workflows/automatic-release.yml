@@ -1,12 +1,12 @@
 name: Automatic Releases workflow sample
 on:  
-  # workflow_dispatch:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
   
 jobs:
   test:
@@ -27,17 +27,6 @@ jobs:
       - name: Test with the dotnet CLI
         run: dotnet test
         working-directory: src
-  
-  # print-status:
-  #   name: logs
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Print values
-  #       run: |
-  #         echo ${{ github.ref }}
-  #         echo ${{ github.event_name }}
-  #         echo ${{ github.event.pull_request.merged 
 
   create-release:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -49,25 +38,8 @@ jobs:
     outputs:
       tag: ${{ steps.changelog.outputs.tag }}
     steps:  
-    #   - name: Checkout version repo
-    #     uses: actions/checkout@v3
-    #     with:
-    #       repository: primo391981/packages
-    #       path: packages
       - name: Checkout
         uses: actions/checkout@v3
-        # with:
-        #   path: main
-      # - name: Checkout version repo
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: primo391981/packages
-      #     path: packages
-      # - name: "Checkout app repo"
-      #   uses: actions/checkout@v3
-      #   with:
-      #     ref: ${{ github.event.pull_request.head.ref }}
-      # - run: cd /home/runner/work/automatic-releases/automatic-releases/main
       - name: Conventional Changelog Action
         id: changelog 
         uses: TriPSs/conventional-changelog-action@v3 
@@ -86,21 +58,6 @@ jobs:
           tag_name: ${{ steps.changelog.outputs.tag }} 
           release_name: ${{ steps.changelog.outputs.tag }} 
           body: ${{ steps.changelog.outputs.clean_changelog }}
-      # - run: |
-      #     pwd
-      #     ls -la
-      #     cd ..
-      #     pwd
-      #     ls -la
-      #     cd ..
-      #     pwd
-      #     ls -la
-      # - name: Checkout version repo
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: primo391981/packages
-      # - run: cat package.json
-
       
   publish-package-ghcr:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -111,7 +68,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # Add your test steps here if needed...
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
@@ -140,37 +96,23 @@ jobs:
   publish-package-acr:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
-    # outputs:
-    #   container_name: ${{ steps.set-container-name.outputs.container_name }}
     needs: create-release
     steps:
-    # checkout the repo
     - name: 'Checkout Github Action'
       uses: actions/checkout@v3
-
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
     - uses: azure/docker-login@v1
       with:
         login-server: ${{ vars.ACR_SERVER }}
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
-
     - name: 'Build Push to ACR'
       run: |
-        echo ${{ needs.create-release.outputs.tag }}
         docker build . -t ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
         docker push ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }} 
-    # - name: 'Set output'
-    #   id: set-container-name
-    #   env:
-    #     SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
-    #   run: |
-    #     container=$(gpg --symmetric --batch --passphrase "$SECRET" --output - <(echo "${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}") | base64 -w0)
-    #     echo "container_name=$container" >> "$GITHUB_OUTPUT"
 
     # - uses: azure/webapps-deploy@v2
     #   with:
