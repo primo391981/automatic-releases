@@ -58,6 +58,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+          
         # with:
         #   path: main
       # - name: Checkout version repo
@@ -79,6 +80,7 @@ jobs:
           skip-commit: 'true'
           # version-file: '../packages/package.json'
           skip-tag: 'false'
+          git-branch: '${{ github.event.pull_request.head.ref }}'
       # - name: Create Release
       #   uses: actions/create-release@v1
       #   if: ${{ steps.changelog.outputs.skipped == 'false' && github.ref == 'refs/heads/main'}} 
