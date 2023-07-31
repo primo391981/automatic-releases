@@ -129,11 +129,18 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
+      content: read
     steps:  
+      - uses: actions/checkout@v3
+      - name: 'Create issue'
+        id: create-issue
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v3
         with:
-          issue-number: ${{ github.event.pull_request.number }} 
+          issue-number: ${{ steps.create-issue.outputs.number }} 
           body: |
             New container created and publisehd!
             tag
