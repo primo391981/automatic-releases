@@ -6,6 +6,9 @@ on:
 
 jobs:
   deploy-to-infra:
+    permissions:
+      issues: write
+      pull-requests: write
     # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     # needs: [publish-package-acr,create-release]
