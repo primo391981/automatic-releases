@@ -126,6 +126,8 @@ jobs:
   create-comment:
     runs-on: ubuntu-latest
     needs: [publish-package-acr,create-release]
+    permissions:
+      issues: write
     steps:  
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v2
