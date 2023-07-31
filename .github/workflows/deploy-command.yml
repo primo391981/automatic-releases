@@ -26,7 +26,7 @@ jobs:
       # env:
       #   SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
       run: |
-        echo "Deploying container ${{ github.event.client_payload.slash_command.args.named.version }} in echo ${{ github.event.client_payload.slash_command.args.named.env }}"
+        echo "Deploying container ${{ github.event.client_payload.slash_command.args.named.version }} in ${{ github.event.client_payload.slash_command.args.named.env }}"
         # echo ${{ github.event.client_payload.slash_command.command }}
         # echo ${{ github.event.client_payload.slash_command.args.all }}
         # echo ${{ github.event.client_payload.slash_command.args.unnamed.all }}
@@ -38,3 +38,21 @@ jobs:
         # container_name=${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
         # az deployment group create --resource-group RG-POC --template-file appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_NAME }} containerImage=$container_name
       working-directory: infrastructure
+
+  send-message-ack:
+    needs: deploy-to-infra
+    permissions:
+      issues: write
+      pull-requests: write
+    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    # needs: [publish-package-acr,create-release]
+    steps:
+    - name: Answer ack message
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+        body: |
+          >Run deploy container ${{ github.event.client_payload.slash_command.args.named.version }} in ${{ github.event.client_payload.slash_command.args.named.env }}
+          >Check Status ..
+        reaction-type: rocket

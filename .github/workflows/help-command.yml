@@ -5,7 +5,7 @@ on:
     types: [help-command]
 
 jobs:
-  deploy-to-infra:
+  send-help:
     permissions:
       issues: write
       pull-requests: write
@@ -19,5 +19,5 @@ jobs:
         comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
         body: |
           >Use /help to get help
-          >Use /deply to deploy to cloud with env=<ENV> and version=<CONTAINER_VERSION> (args will be added ..)
+          >Use /deploy to deploy to cloud with env=<ENVIRONENT_NAME> and version=<CONTAINER_VERSION> (args will be added ..)
         reaction-type: eyes
