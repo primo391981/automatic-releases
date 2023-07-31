@@ -138,7 +138,7 @@ jobs:
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v3
         with:
-          issue-number: ${{ github.event.pull_request.number }} 
+          issue-number: ${{ steps.create-issue.outputs.number }} 
           body: |
             New container created and publisehd!
             tag
