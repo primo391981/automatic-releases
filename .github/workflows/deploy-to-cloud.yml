@@ -1,6 +1,6 @@
 on:
   repository_dispatch:
-    types: [deploy]
+    types: [deploy-command]
 
 jobs:
   deploy-to-infra:
