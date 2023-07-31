@@ -129,7 +129,7 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
-      content: read
+      contents: read
     steps:  
       - uses: actions/checkout@v3
       - name: 'Create issue'
