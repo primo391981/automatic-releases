@@ -1,6 +1,6 @@
 ---
-title: New artifact created
+title: New artifact created {{ env.VERSION }}
 
-labels: ci, artifacts
+labels: ci, artifacts, {{ env.VERSION }}
 ---
 This discussion was created to test ChatOps features!
