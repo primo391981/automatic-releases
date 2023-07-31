@@ -1,3 +1,5 @@
+name: Deploy to cloud
+
 on:
   repository_dispatch:
     types: [deploy-command]
