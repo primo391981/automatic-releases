@@ -19,5 +19,5 @@ jobs:
         comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
         body: |
           >Use /help to get help
-          >Use /deply to deploy to cloud with env=<ENVIRONMENT> and version=<CONTAINER_VERSION> (args will be added ..)
+          >Use /deply to deploy to cloud with env=<ENV> and version=<CONTAINER_VERSION> (args will be added ..)
         reaction-type: eyes
