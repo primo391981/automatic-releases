@@ -26,7 +26,15 @@ jobs:
       # env:
       #   SECRET: ${{ secrets.PGP_SECRET_SIGNING_PASSPHRASE }}
       run: |
-        echo "Deploying container .."
+        echo "Deploying container ${{ github.event.client_payload.slash_command.args.named.version }} in echo ${{ github.event.client_payload.slash_command.args.named.env }}"
+        # echo ${{ github.event.client_payload.slash_command.command }}
+        # echo ${{ github.event.client_payload.slash_command.args.all }}
+        # echo ${{ github.event.client_payload.slash_command.args.unnamed.all }}
+        # echo ${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}
+        # echo ${{ github.event.client_payload.slash_command.args.unnamed.arg2 }}
+        # echo ${{ github.event.client_payload.slash_command.args.named.env }}
+        # echo ${{ github.event.client_payload.slash_command.args.named.version }}
+        # echo ${{ github.event.client_payload.slash_command.args.named.reason }}
         # container_name=${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
         # az deployment group create --resource-group RG-JMF-POC --template-file appservice.bicep --parameters appName=poc-auto-package acrName=${{ vars.ACR_NAME }} containerImage=$container_name
       working-directory: infrastructure

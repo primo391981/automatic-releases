@@ -1,0 +1,20 @@
+name: Deploy to cloud
+
+on:
+  repository_dispatch:
+    types: [help-command]
+
+jobs:
+  deploy-to-infra:
+    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    # needs: [publish-package-acr,create-release]
+    steps:
+    - name: Respond with help
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          body: |
+            >Use /help to get help
+            >Use /deply to deploy to cloud with env=<ENVIRONMENT> and version=<CONTAINER_VERSION> (args will be added ..)
+          reaction-type: eyes
