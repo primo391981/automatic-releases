@@ -129,7 +129,12 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
+      content: read
     steps:  
+      - uses: actions/checkout@v3
+      - uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v3
         with:
