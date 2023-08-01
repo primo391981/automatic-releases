@@ -13,6 +13,7 @@ jobs:
           commands: |
             deploy
             help
+          permission: admin
 # TODO: Add ACK message
 
 
