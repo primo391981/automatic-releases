@@ -37,6 +37,7 @@ jobs:
     needs: test
     outputs:
       tag: ${{ steps.changelog.outputs.tag }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
     steps:  
       - name: Checkout
         uses: actions/checkout@v3
@@ -146,6 +147,8 @@ jobs:
             New container created and publisehd!
             tag
             ${{ needs.create-release.outputs.tag }} 
+            ## Changelog:
+            ${{ needs.create-release.outputs.changelog }} 
           reactions: rocket
 
   # deploy-to-infra:
