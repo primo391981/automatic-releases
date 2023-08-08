@@ -98,8 +98,6 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     needs: create-release
-    env:
-      tag=${{ needs.create-release.outputs.tag }}
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@v3
@@ -112,13 +110,18 @@ jobs:
         login-server: ${{ vars.ACR_SERVER }}
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
+    - name: Get Major.Minor tag
+      id: set-tag
+      run: |
+        tag=${{ needs.create-release.outputs.tag }}
+        echo "tag=${{ needs.create-release.outputs.tag }}%.*" >> $GITHUB_OUTPUT
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v4
       with:
         images: ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}
         tags: |
-          type=semver,pattern={{raw}},value=${tag%.*}
+          type=semver,pattern={{raw}},value=${{ steps.set-tag.outputs.tag }}
           # type=semver,pattern={{raw}},value=${{ needs.create-release.outputs.tag }}
           # type=ref,event=branch
           # type=ref,event=pr
