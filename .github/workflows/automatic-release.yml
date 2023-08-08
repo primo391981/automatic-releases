@@ -115,8 +115,7 @@ jobs:
       uses: docker/metadata-action@v4
       with:
         images: ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}
-        tags: |
-          type=semver,pattern={{major}}.{{minor}}
+        tags: type=semver,pattern={{major}}.{{minor}}
           # type=semver,pattern={{raw}},value=${{ needs.create-release.outputs.tag }}
           # type=ref,event=branch
           # type=ref,event=pr
