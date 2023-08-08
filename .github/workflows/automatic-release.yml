@@ -37,6 +37,8 @@ jobs:
     needs: test
     outputs:
       tag: ${{ steps.changelog.outputs.tag }}
+      major: ${{ steps.changelog.outputs.major }}
+      minor: ${{ steps.changelog.outputs.minor }}
       changelog: ${{ steps.changelog.outputs.changelog }}
     steps:  
       - name: Checkout
