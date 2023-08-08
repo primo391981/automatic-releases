@@ -111,23 +111,23 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
     - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}
-          tags: |
-            type=semver,pattern={{raw}},value=${{ needs.create-release.outputs.tag }}
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{major}}.{{minor}}
-          # tags: type=sha
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}
+        tags: |
+          type=semver,pattern={{raw}},value=${{ needs.create-release.outputs.tag }}
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{major}}.{{minor}}
+        # tags: type=sha
     - name: Build container
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
     # - name: 'Build Push to ACR'
     #   run: |
     #     docker build . -t ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}:${{ needs.create-release.outputs.tag }}
