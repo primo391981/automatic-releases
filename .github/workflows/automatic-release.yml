@@ -113,15 +113,16 @@ jobs:
     - name: Get Major.Minor tag
       id: set-tag
       run: |
-        tag=${{ needs.create-release.outputs.tag }}
-        echo "tag=${{ needs.create-release.outputs.tag }}%.*" >> $GITHUB_OUTPUT
+        original_tag=${{ needs.create-release.outputs.tag }}
+        tag=${original_tag%.*}
+        echo "semver_tag=${tag}" >> $GITHUB_OUTPUT
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v4
       with:
         images: ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}
         tags: |
-          type=semver,pattern={{raw}},value=${{ steps.set-tag.outputs.tag }}
+          type=semver,pattern={{raw}},value=${{ steps.set-tag.outputs.semver_tag }}
           # type=semver,pattern={{raw}},value=${{ needs.create-release.outputs.tag }}
           # type=ref,event=branch
           # type=ref,event=pr
