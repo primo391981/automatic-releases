@@ -110,23 +110,16 @@ jobs:
         login-server: ${{ vars.ACR_SERVER }}
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
-    - name: Get Major.Minor tag
-      id: set-tag
-      run: |
-        original_tag=${{ needs.create-release.outputs.tag }}
-        tag=${original_tag%.*}
-        echo "semver_tag=${tag}" >> $GITHUB_OUTPUT
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v4
       with:
         images: ${{ vars.ACR_SERVER }}/${{ vars.DEPARTMENT }}/${{ vars.APPLICATION_NAME }}
         tags: |
-          type=semver,pattern={{raw}},value=${{ steps.set-tag.outputs.semver_tag }}
           # type=semver,pattern={{raw}},value=${{ needs.create-release.outputs.tag }}
           # type=ref,event=branch
           # type=ref,event=pr
-          # type=semver,pattern=v{{needs.create-release.outputs.major}}.{{needs.create-release.outputs.minor}}
+          type=semver,pattern={{major}}.{{minor}},value=${{ needs.create-release.outputs.tag }}
         # tags: type=sha
     - name: Build container
       uses: docker/build-push-action@v4
