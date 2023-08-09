@@ -119,7 +119,7 @@ jobs:
           # type=semver,pattern={{raw}},value=${{ needs.create-release.outputs.tag }}
           # type=ref,event=branch
           # type=ref,event=pr
-          type=semver,pattern={{major}}.{{minor}},value=${{ needs.create-release.outputs.tag }}
+          type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.create-release.outputs.tag }}
         # tags: type=sha
     - name: Build container
       uses: docker/build-push-action@v4
