@@ -46,7 +46,7 @@ jobs:
         uses: TriPSs/conventional-changelog-action@v3 
         with: 
           github-token: ${{ secrets.github_token }}
-          output-file: 'false' 
+          output-file: 'CHANGELOG.md' 
           skip-commit: 'true'
           # version-file: '../packages/package.json'
           skip-tag: 'false'
