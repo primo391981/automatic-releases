@@ -1,4 +1,4 @@
-# Use the official .NET Core SDK as the base image
+# Use the official .NET Core SDK as the base image from dev
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 
 # Set the working directory inside the container
