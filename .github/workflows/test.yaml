@@ -1,0 +1,156 @@
+name: CICD-workflow
+run-name: Deploy App .net8 Hello World 🚀 ${{ inputs.Environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      Environment:
+        type: choice
+        description: 'Environment'
+        required: true
+        options: 
+            - dev
+            - stg
+            - uat
+            - prod
+      AppId:
+        type: choice
+        description: 'ApplicationId'
+        required: true
+        options: 
+            - a
+
+jobs:
+  build:
+    permissions:
+      id-token: write
+      contents: write 
+    runs-on: internal
+    environment: ${{ inputs.Environment }}
+    outputs:
+      image_tag: ${{ steps.prep.outputs.BUILD_ID }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set the repo varables
+        id: set_repo_varables
+        run: |
+              cat env/.env >>${GITHUB_ENV}
+
+      # - name: Generate SemVer tag
+      #   id: semver 
+      #   run: |
+      #     semantic_version="v$(cat metadata.json | jq -r '.version.major').$(cat metadata.json | jq -r '.version.minor').$(cat metadata.json | jq -r '.version.patch')"
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'  # Adjust the .NET Core version according to your needs
+  
+      - name: Restore NuGet packages
+        run: dotnet restore
+        working-directory: src/ConsoleAppHelloWorld
+
+      - name: Build dotnet
+        run: dotnet build --configuration Release --no-restore
+        working-directory: src/ConsoleAppHelloWorld
+        
+      - name: Run Tests
+        run: dotnet test --no-build --verbosity normal  # Runs the tests of the .NET Cor project
+        working-directory: src/ConsoleAppHelloWorld
+   
+      - name: Generate SemVer tag
+        id: semver 
+        run: |
+          semantic_version="v$(cat metadata.json | jq -r '.version.major').$(cat metadata.json | jq -r '.version.minor').$(cat metadata.json | jq -r '.version.patch')"
+          echo "SEMVER=$semantic_version" >> "$GITHUB_OUTPUT"
+
+      - name: Generate build ID                     # Generation of Build ID
+        id: prep
+        run: |
+            sha=${GITHUB_SHA::8}
+            ts=$(date +%s%3N)
+            echo "::set-output name=BUILD_ID::${{ steps.semver.outputs.SEMVER }}-${ts}"
+
+      - name: Build and tag Docker image
+        run: docker build -f Dockerfile --tag ${{ vars.REGISTRY_NAME }}.azurecr.io/ns-${{env.BU}}-${{ inputs.Environment }}-${{env.APPLICATION_NAME}}-${{ inputs.AppId }}-${{env.APPLICATION_ROLE}}:${{ env.BUILD_ID }} .
+        env:
+          BUILD_ID: ${{ steps.prep.outputs.BUILD_ID }}
+
+      - name: Az CLI login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to Azure Container Registry
+        env:
+          AZURE_CONTAINER_REGISTRY: ${{ vars.REGISTRY_NAME }}.azurecr.io
+        run: |
+          az acr login --name $AZURE_CONTAINER_REGISTRY
+
+      - name: Push Docker image to Azure ACR  #Push Image to ACR
+        run: |
+          docker push ${{ vars.REGISTRY_NAME }}.azurecr.io/ns-${{env.BU}}-${{ inputs.Environment }}-${{env.APPLICATION_NAME}}-${{ inputs.AppId }}-${{env.APPLICATION_ROLE}}:${{ env.BUILD_ID }}
+        env:
+          BUILD_ID: ${{ steps.prep.outputs.BUILD_ID }}
+  
+  deploy:
+    permissions:
+      id-token: write
+      contents: write
+    runs-on: internal
+    needs: [build]
+    environment: ${{ inputs.Environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set the repo varables
+        id: set_repo_varables
+        run: |
+              cat env/.env >>${GITHUB_ENV}
+      
+      - name: Install kubectl and kubelogin
+        run: |
+          az aks install-cli
+
+      - name: Login via Az module
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to Azure Container Registry
+        run: |
+          az acr login --name ${{ vars.REGISTRY_NAME }}
+        
+      - uses: azure/aks-set-context@v3
+        with:
+           resource-group: ${{ vars.AKS_RESOURCE_GROUP }}
+           cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
+           admin: 'false'
+           use-kubelogin: 'true'
+      
+      - name: check if namespace exists
+        run: |
+          kubectl get ns ns-${{env.BU}}-${{ inputs.Environment }}-${{env.APPLICATION_NAME}}-${{ inputs.AppId }} || kubectl create ns ns-${{env.BU}}-${{ inputs.Environment }}-${{env.APPLICATION_NAME}}-${{ inputs.AppId }}
+
+      - name: Helm charts packages - Index
+        env:
+          TAG: ${{needs.build.outputs.image_tag}}
+        run: |
+          cd helm/approle-values
+          helm upgrade --install ${{env.APPLICATION_NAME}} oci://${{ vars.REGISTRY_NAME }}.azurecr.io/helm/app-template \
+          --namespace=ns-${{env.BU}}-${{ inputs.Environment }}-${{env.APPLICATION_NAME}}-${{ inputs.AppId }} \
+          --values values-${{ inputs.Environment }}.yaml \
+          --version 0.1.0 \
+          --set image.tag=${{ env.TAG }} \
+          # --debug \
+          --atomic
+
+                                                                                                                                                              
